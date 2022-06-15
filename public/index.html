@@ -5,8 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <script src="/js/index.js"></script>
-    <!-- todo fichier js -->
+    <script defer src="/js/index.js"></script>
     <title>Formulaire mariage</title>
   </head>
   <body>
@@ -37,12 +36,13 @@
       </div>
       <br />
 
-      <div>Choix repas:</div>
-      <div id="choix-repas-container"></div>
+      <div id="repas-section">
+        <div>Choix repas:</div>
+        <div id="choix-repas-container"></div>
+      </div>
       <br />
 
       <div><input type="submit" value="Envoyer" /></div>
     </form>
-
   </body>
 </html>

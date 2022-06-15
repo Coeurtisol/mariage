@@ -5,6 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script defer src="/js/admin.js"></script>
     <title>Admin mariage</title>
     <style>
       table {
@@ -33,7 +34,6 @@
           <th>Cérémonie</th>
           <th>Vin d'honneur</th>
           <th>Repas</th>
-          <!-- <th>Plat</th> -->
         </tr>
       </thead>
       <tbody></tbody>
@@ -62,93 +62,6 @@
       <div class="libele-stat">Présents au repas :</div>
       <span id="nb-vient-repas"></span>
     </div>
-
-    <br />
-    <div>
-      <div class="libele-stat">Repas boeuf :</div>
-      <span id="nb-repas-boeuf"></span>
-    </div>
-    <div>
-      <div class="libele-stat">Repas poisson :</div>
-      <span id="nb-repas-poisson"></span>
-    </div>
-    <div>
-      <div class="libele-stat">Repas végé :</div>
-      <span id="nb-repas-vege"></span>
-    </div>
-
-    <script>
-      const invitesContainer = document.querySelector("tbody");
-      const nbInvitesContainer = document.querySelector("#nb-invite");
-      const nbAbsentsContainer = document.querySelector("#nb-absents");
-      const nbVientCeremonieContainer = document.querySelector(
-        "#nb-vient-ceremonie"
-      );
-      const nbVientVinDHonneurContainer = document.querySelector(
-        "#nb-vient-vin-dhonneur"
-      );
-      const nbVientRepasContainer = document.querySelector("#nb-vient-repas");
-      const nbRepasBoeufContainer = document.querySelector("#nb-repas-boeuf");
-      const nbRepasPoissonContainer =
-        document.querySelector("#nb-repas-poisson");
-      const nbRepasVegeContainer = document.querySelector("#nb-repas-vege");
-
-      let nbAbsents = 0;
-      let nbVientCeremonie = 0;
-      let nbVientVinDHonneur = 0;
-      let nbVientRepas = 0;
-      let nbBoeuf = 0;
-      let nbPoisson = 0;
-      let nbVege = 0;
-
-      async function getAllInvites() {
-        try {
-          const response = await axios.get("/api/invite");
-          console.log(response.data);
-          makeListeInvites(response.data);
-          showStatistics(response.data);
-        } catch (error) {
-          console.log(error);
-        }
-      }
-      getAllInvites();
-
-      function makeListeInvites(listeInvites) {
-        listeInvites.forEach((i) => {
-          updateStatistics(i);
-          const ligneInvite = `<tr>
-              <td>${i.id}</td>
-              <td>${i.prenom}</td>
-              <td>${i.nom}</td>
-              <td>${i.vientCeremonie ? "X" : ""}</td>
-              <td>${i.vientVinDHonneur ? "X" : ""}</td>
-              <td>${i.repas?.libele || ""}</td>
-            </tr>`;
-          invitesContainer.insertAdjacentHTML("beforeend", ligneInvite);
-        });
-      }
-
-      function updateStatistics(i) {
-        if (!i.vientCeremonie && !i.vientVinDHonneur & !i.vientRepas)
-          nbAbsents++;
-        if (i.vientCeremonie) nbVientCeremonie++;
-        if (i.vientVinDHonneur) nbVientVinDHonneur++;
-        if (i.vientRepas) nbVientRepas++;
-        if (i.repas?.id == 1) nbBoeuf++;
-        if (i.repas?.id == 2) nbPoisson++;
-        if (i.repas?.id == 3) nbVege++;
-      }
-
-      function showStatistics(listeInvites) {
-        nbAbsentsContainer.innerText = nbAbsents;
-        nbInvitesContainer.innerText = listeInvites.length;
-        nbVientCeremonieContainer.innerText = nbVientCeremonie;
-        nbVientVinDHonneurContainer.innerText = nbVientVinDHonneur;
-        nbVientRepasContainer.innerText = nbVientRepas;
-        nbRepasBoeufContainer.innerText = nbBoeuf;
-        nbRepasPoissonContainer.innerText = nbPoisson;
-        nbRepasVegeContainer.innerText = nbVege;
-      }
-    </script>
+    <div id="nb-repas-container"></div>
   </body>
 </html>

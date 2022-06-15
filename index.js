@@ -4,8 +4,8 @@ import router from "./router.js";
 const server = express();
 
 server.use(express.json());
-server.use(router);
 server.use(express.static('public'));
+server.use(router);
 
 const HOST = "http://localhost";
 const PORT = 3000;

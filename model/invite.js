@@ -18,28 +18,20 @@ export default class Invite {
     this.data.vientCeremonie = vientCeremonie;
     this.data.vientVinDHonneur = vientVinDHonneur;
     this.data.vientRepas = vientRepas;
-    this.data.repasId = Number(repas) || undefined;
+    this.data.repas = repas;
   }
 
   save = async () => {
     const newInvite = await invite.create({
       data: this.data,
     });
+    console.log("invite - save", newInvite);
     return newInvite;
   };
 
   static getAll = async () => {
-    const invites = await invite.findMany({
-      select: {
-        id: true,
-        nom: true,
-        prenom: true,
-        vientCeremonie: true,
-        vientVinDHonneur: true,
-        vientRepas: true,
-        repas: true,
-      },
-    });
+    const invites = await invite.findMany();
+    console.log("invite - getall", invites);
     return invites;
   };
 
@@ -49,7 +41,7 @@ export default class Invite {
         id,
       },
     });
-    console.log("inviteTrouve", inviteTrouve);
+    console.log("invite - findById", inviteTrouve);
     return inviteTrouve;
   };
 }

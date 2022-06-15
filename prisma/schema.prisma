@@ -17,12 +17,5 @@ model Invite {
   vientCeremonie   Boolean @default(false)
   vientVinDHonneur Boolean @default(false)
   vientRepas       Boolean @default(false)
-  repasId          Int?
-  repas            Repas?  @relation(fields: [repasId], references: [id])
-}
-
-model Repas {
-  id     Int      @id
-  libele String
-  Invite Invite[]
+  repas            String?
 }

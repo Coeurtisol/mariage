@@ -1,35 +1,26 @@
+const listeRepas = ["Boeuf", "Poisson", "Végé"];
 const form = document.querySelector("#form-invitation");
 const choixRepasContainer = document.querySelector("#choix-repas-container");
 
-async function getAllRepas() {
-  try {
-    const response = await axios.get("/api/repas");
-    console.log("repas", response);
-    makeListeRepas(response.data);
-  } catch (error) {
-    console.log(error);
-  }
-}
-getAllRepas();
-
-function makeListeRepas(listeRepas) {
-  const listeChoix = listeRepas
+function buildListeRepas() {
+  const listeRadioRepas = listeRepas
     .map(
       (repas) =>
         `<div>
         <input
           type="radio"
           name="input-repas"
-          id="repas-${repas.id}"
-          value=${repas.id}
+          id="repas-${repas}"
+          value=${repas}
           required
         />
-        <label for="repas-${repas.id}">${repas.libele}</label>
+        <label for="repas-${repas}">${repas}</label>
       </div>`
     )
     .join("");
-  choixRepasContainer.innerHTML = listeChoix;
+  choixRepasContainer.innerHTML = listeRadioRepas;
 }
+buildListeRepas();
 
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -56,42 +47,44 @@ form.addEventListener("submit", async (e) => {
     ).value;
     data.repas = repas;
   }
-  console.log(data);
+  console.log("data", data);
   try {
     const response = await axios.post("/valider_formulaire_invite", data);
-    console.log(response);
+    console.log("response", response);
     form.reset();
   } catch (error) {
-    console.log(error);
+    console.log("error", error);
   }
 });
 
 document.querySelector("#input-vient-repas").addEventListener("change", (e) => {
   document.querySelectorAll('input[name="input-repas"]').forEach((input) => {
     input.required = !input.required;
-    console.log(input.required);
+    document.querySelector("#repas-section").style.display = input.required
+      ? "block"
+      : "none";
   });
 });
 
-function urlCheck() {
-  const id = window.location.pathname.substring(1);
-  console.log(id);
-  if (id) getInvite(id);
-}
-urlCheck();
+// function urlCheck() {
+//   const id = window.location.pathname.substring(1);
+//   console.log(id);
+//   if (id) getInvite(id);
+// }
+// urlCheck();
 
-async function getInvite(id) {
-  try {
-    const response = await axios.get(`/api/invite/${id}`);
-    console.log(response);
-    if (response.data) {
-      updateForm(response.data);
-    }
-  } catch (error) {
-    console.log(error);
-  }
-}
+// async function getInvite(id) {
+//   try {
+//     const response = await axios.get(`/api/invite/${id}`);
+//     console.log(response);
+//     if (response.data) {
+//       updateForm(response.data);
+//     }
+//   } catch (error) {
+//     console.log(error);
+//   }
+// }
 
-function updateForm(invite) {
-  //todo remplir champs avec les données
-}
+// function updateForm(invite) {
+//   //todo remplir champs avec les données
+// }
