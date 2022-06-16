@@ -1,8 +1,22 @@
-const listeRepas = ["Boeuf", "Poisson", "Végé"];
+let id;
 const form = document.querySelector("#form-invitation");
+const inputPrenom = document.querySelector("#input-prenom");
+const inputNom = document.querySelector("#input-nom");
+const inputVientCeremonie = document.querySelector("#input-vient-ceremonie");
+const inputVientVinDHonneur = document.querySelector(
+  "#input-vient-vin-dhonneur"
+);
+const inputVientRepas = document.querySelector("#input-vient-repas");
 const choixRepasContainer = document.querySelector("#choix-repas-container");
+const repasSection = document.querySelector("#repas-section");
 
-function buildListeRepas() {
+const listeRepas = ["Boeuf", "Poisson", "Végé"];
+let choixRepasRequired = true;
+
+/**
+ * @param {String[]} listeRepas
+ */
+function buildListeRepas(listeRepas) {
   const listeRadioRepas = listeRepas
     .map(
       (repas) =>
@@ -20,19 +34,19 @@ function buildListeRepas() {
     .join("");
   choixRepasContainer.innerHTML = listeRadioRepas;
 }
-buildListeRepas();
+buildListeRepas(listeRepas);
 
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
-  const prenom = document.querySelector("#input-prenom").value;
-  const nom = document.querySelector("#input-nom").value;
-  const vientCeremonie = document.querySelector(
-    "#input-vient-ceremonie"
-  ).checked;
-  const vientVinDHonneur = document.querySelector(
-    "#input-vient-vin-dhonneur"
-  ).checked;
-  const vientRepas = document.querySelector("#input-vient-repas").checked;
+  prepareForm();
+});
+
+async function prepareForm() {
+  const prenom = inputPrenom.value;
+  const nom = inputNom.value;
+  const vientCeremonie = inputVientCeremonie.checked;
+  const vientVinDHonneur = inputVientVinDHonneur.checked;
+  const vientRepas = inputVientRepas.checked;
 
   const data = {
     prenom,
@@ -48,43 +62,89 @@ form.addEventListener("submit", async (e) => {
     data.repas = repas;
   }
   console.log("data", data);
+  if (id) sendUpdateInvite(data);
+  else sendNewInvite(data);
+}
+
+async function sendUpdateInvite(data) {
   try {
-    const response = await axios.post("/valider_formulaire_invite", data);
-    console.log("response", response);
-    form.reset();
+    console.log("put");
+    const response = await axios.put(`/api/invite/${id}`, data);
+    // console.log("response", response);
+    alert('Modifications enregistrées')
+    window.location = "/";
   } catch (error) {
     console.log("error", error);
   }
+}
+
+async function sendNewInvite(data) {
+  try {
+    console.log("post");
+    const response = await axios.post("/valider_formulaire_invite", data);
+    console.log("response", response);
+    form.reset();
+    choixRepasRequired = true;
+    changeRequiredRadioRepas(choixRepasRequired);
+    changeDisplayRepasSection(choixRepasRequired);
+  } catch (error) {
+    console.log("error", error);
+  }
+}
+
+inputVientRepas.addEventListener("change", (e) => {
+  choixRepasRequired = !choixRepasRequired;
+  changeRequiredRadioRepas(choixRepasRequired);
+  changeDisplayRepasSection(choixRepasRequired);
 });
 
-document.querySelector("#input-vient-repas").addEventListener("change", (e) => {
+/**
+ * @param {Boolean} repasRequired
+ */
+function changeRequiredRadioRepas(repasRequired) {
   document.querySelectorAll('input[name="input-repas"]').forEach((input) => {
-    input.required = !input.required;
-    document.querySelector("#repas-section").style.display = input.required
-      ? "block"
-      : "none";
+    input.required = repasRequired;
   });
-});
+}
 
-// function urlCheck() {
-//   const id = window.location.pathname.substring(1);
-//   console.log(id);
-//   if (id) getInvite(id);
-// }
-// urlCheck();
+/**
+ * @param {Boolean} repasRequired
+ */
+function changeDisplayRepasSection(repasRequired) {
+  repasSection.style.display = repasRequired ? "block" : "none";
+}
 
-// async function getInvite(id) {
-//   try {
-//     const response = await axios.get(`/api/invite/${id}`);
-//     console.log(response);
-//     if (response.data) {
-//       updateForm(response.data);
-//     }
-//   } catch (error) {
-//     console.log(error);
-//   }
-// }
+function getInviteIdInUrl() {
+  id = window.location.pathname.substring(1);
+  console.log(id);
+  if (id) FetchInviteById(id);
+}
+getInviteIdInUrl();
 
-// function updateForm(invite) {
-//   //todo remplir champs avec les données
-// }
+async function FetchInviteById(id) {
+  try {
+    const response = await axios.get(`/api/invite/${id}`);
+    console.log(response);
+    if (response.data) {
+      fillForm(response.data);
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+function fillForm(invite) {
+  inputPrenom.value = invite.prenom;
+  inputNom.value = invite.nom;
+  inputVientCeremonie.checked = invite.vientCeremonie;
+  inputVientVinDHonneur.checked = invite.vientVinDHonneur;
+  inputVientRepas.checked = invite.vientRepas;
+  choixRepasRequired = invite.vientRepas;
+  changeRequiredRadioRepas(choixRepasRequired);
+  changeDisplayRepasSection(choixRepasRequired);
+  document.querySelectorAll('input[name="input-repas"]').forEach((input) => {
+    if (input.value === invite.repas) {
+      input.checked = true;
+    } else input.checked = false;
+  });
+}

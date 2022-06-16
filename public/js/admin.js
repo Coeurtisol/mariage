@@ -13,7 +13,7 @@ const stats = {
   nbVientCeremonie: 0,
   nbVientVinDHonneur: 0,
   nbVientRepas: 0,
-  repas: {}
+  repas: {},
 };
 
 async function getAllInvites() {
@@ -32,7 +32,7 @@ function makeListeInvites(listeInvites) {
   listeInvites.forEach((i) => {
     setStatistics(i);
     const ligneInvite = `<tr>
-              <td>${i.id}</td>
+              <td><a href="/${i.id}">${i.id}</a></td>
               <td>${i.prenom}</td>
               <td>${i.nom}</td>
               <td>${i.vientCeremonie ? "X" : ""}</td>
@@ -53,7 +53,7 @@ function setStatistics(invite) {
     if (stats.repas[invite.repas] == undefined) stats.repas[invite.repas] = 1;
     else stats.repas[invite.repas]++;
   }
-//   console.log("stats", stats);
+  //   console.log("stats", stats);
 }
 
 function showStatistics(listeInvites) {
@@ -67,15 +67,14 @@ function showStatistics(listeInvites) {
 }
 
 function buildStatsRepas() {
-
-    const listeDivRepas = Object.entries(stats.repas)
-      .map(
-        (repas) =>
-          `<div>
+  const listeDivRepas = Object.entries(stats.repas)
+    .map(
+      (repas) =>
+        `<div>
             - ${repas[0]} : ${repas[1]}
           </div>`
-      )
-      .join("");
-      nbRepasContainer.innerHTML = listeDivRepas;
-  }
-  buildStatsRepas();
+    )
+    .join("");
+  nbRepasContainer.innerHTML = listeDivRepas;
+}
+buildStatsRepas();

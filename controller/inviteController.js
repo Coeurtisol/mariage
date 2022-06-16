@@ -32,8 +32,21 @@ async function newInvite(req, res) {
   }
 }
 
+async function updateOne(req, res) {
+  const id = Number(req.params.id);
+  const data = { ...req.body, id };
+  try {
+    const updatedInvite = await Invite.updateOne(data);
+    res.json(updatedInvite);
+  } catch (error) {
+    console.log(error);
+    res.status(500).end();
+  }
+}
+
 export default {
   getAll,
   findById,
   newInvite,
+  updateOne,
 };

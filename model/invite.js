@@ -44,4 +44,15 @@ export default class Invite {
     console.log("invite - findById", inviteTrouve);
     return inviteTrouve;
   };
+
+  static updateOne = async (data) => {
+    const updatedInvite = await invite.update({
+      where: {
+        id: data.id,
+      },
+      data,
+    });
+    console.log("invite - updateOne", updatedInvite);
+    return updatedInvite;
+  };
 }
